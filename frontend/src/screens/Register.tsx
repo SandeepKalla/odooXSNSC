@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import '../styles/global.css';
 
-const RegisterScreen = () => {
+const Register = () => {
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -43,16 +43,16 @@ const RegisterScreen = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backgroundColor: '#ffffff' }}>
       <div className="container" style={{ padding: '40px', maxWidth: '500px', width: '100%' }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Registration Screen (Screen 2)</h1>
+        <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Registration</h1>
         
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
           <div style={{ 
             width: '100px', 
             height: '100px', 
             borderRadius: '50%', 
-            border: '1px solid #ffffff',
+            border: '1px solid var(--border-primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -168,7 +168,7 @@ const RegisterScreen = () => {
         </form>
 
         <div style={{ marginTop: '20px', textAlign: 'center' }}>
-          <Link to="/login" style={{ color: '#ffffff', textDecoration: 'underline' }}>
+          <Link to="/login" style={{ color: 'var(--accent-blue)', textDecoration: 'underline' }}>
             Already have an account? Login
           </Link>
         </div>
@@ -177,5 +177,5 @@ const RegisterScreen = () => {
   );
 };
 
-export default RegisterScreen;
+export default Register;
 

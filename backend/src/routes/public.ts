@@ -1,7 +1,7 @@
 import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import { authRequired, AuthRequest } from '../middleware/auth';
-import { shiftDates } from '../services/copyTripService';
+import { shiftDates } from '../services/TripService';
 import { z } from 'zod';
 
 const router = express.Router();

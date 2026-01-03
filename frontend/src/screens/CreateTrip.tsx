@@ -10,7 +10,7 @@ interface City {
   country: string;
 }
 
-const CreateTripScreen = () => {
+const CreateTrip = () => {
   const [formData, setFormData] = useState({
     name: '',
     startDate: '',
@@ -66,11 +66,11 @@ const CreateTripScreen = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '30px', textAlign: 'center' }}>Create a new Trip (Screen 4)</h1>
+        <h1 style={{ marginBottom: '30px', textAlign: 'center' }}>Create a new Trip</h1>
 
         <div className="container" style={{ padding: '30px' }}>
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -144,25 +144,29 @@ const CreateTripScreen = () => {
             gridTemplateColumns: 'repeat(3, 1fr)', 
             gap: '20px' 
           }}>
-            {suggestedCities.map((city) => (
-              <div
-                key={city.id}
-                className="container"
-                style={{
-                  width: '100%',
-                  height: '150px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                }}
-                onClick={() => setFormData({ ...formData, cityId: city.id })}
-              >
-                <div>{city.name}</div>
-                <div style={{ fontSize: '12px', marginTop: '5px' }}>{city.country}</div>
-              </div>
-            ))}
+            {suggestedCities.map((city, idx) => {
+              const colorClasses = ['card-blue', 'card-green', 'card-purple', 'card-orange', 'card-pink', 'card-cyan'];
+              const colorClass = colorClasses[idx % colorClasses.length];
+              return (
+                <div
+                  key={city.id}
+                  className={`container ${colorClass}`}
+                  style={{
+                    width: '100%',
+                    height: '150px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => setFormData({ ...formData, cityId: city.id })}
+                >
+                  <div>{city.name}</div>
+                  <div style={{ fontSize: '12px', marginTop: '5px' }}>{city.country}</div>
+                </div>
+              );
+            })}
             {suggestedCities.length < 6 && Array.from({ length: 6 - suggestedCities.length }).map((_, i) => (
               <div
                 key={`empty-${i}`}
@@ -180,5 +184,5 @@ const CreateTripScreen = () => {
   );
 };
 
-export default CreateTripScreen;
+export default CreateTrip;
 

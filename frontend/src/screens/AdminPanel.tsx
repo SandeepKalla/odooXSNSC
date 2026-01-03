@@ -14,7 +14,7 @@ interface AdminStats {
   userTrend: Array<{ date: string; count: number }>;
 }
 
-const AdminPanelScreen = () => {
+const AdminPanel = () => {
   const [stats, setStats] = useState<AdminStats | null>(null);
   const [activeTab, setActiveTab] = useState('users');
   const [loading, setLoading] = useState(true);
@@ -38,7 +38,7 @@ const AdminPanelScreen = () => {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div>Loading...</div>
       </div>
     );
@@ -46,47 +46,47 @@ const AdminPanelScreen = () => {
 
   if (!stats) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div>Failed to load stats</div>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '20px' }}>Admin Panel Screen / Screen 12</h1>
+        <h1 style={{ marginBottom: '20px' }}>Admin Panel</h1>
 
         <SearchBar />
 
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', borderBottom: '1px solid #ffffff' }}>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '30px', borderBottom: '1px solid var(--border-primary)' }}>
           <button
             className={`button ${activeTab === 'users' ? '' : ''}`}
             onClick={() => setActiveTab('users')}
-            style={{ borderBottom: activeTab === 'users' ? '2px solid #ffffff' : 'none' }}
+            style={{ borderBottom: activeTab === 'users' ? '2px solid var(--accent-blue)' : 'none' }}
           >
             Manage Users
           </button>
           <button
             className={`button ${activeTab === 'cities' ? '' : ''}`}
             onClick={() => setActiveTab('cities')}
-            style={{ borderBottom: activeTab === 'cities' ? '2px solid #ffffff' : 'none' }}
+            style={{ borderBottom: activeTab === 'cities' ? '2px solid var(--accent-blue)' : 'none' }}
           >
             Popular cities
           </button>
           <button
             className={`button ${activeTab === 'activities' ? '' : ''}`}
             onClick={() => setActiveTab('activities')}
-            style={{ borderBottom: activeTab === 'activities' ? '2px solid #ffffff' : 'none' }}
+            style={{ borderBottom: activeTab === 'activities' ? '2px solid var(--accent-blue)' : 'none' }}
           >
             Popular Activities
           </button>
           <button
             className={`button ${activeTab === 'analytics' ? '' : ''}`}
             onClick={() => setActiveTab('analytics')}
-            style={{ borderBottom: activeTab === 'analytics' ? '2px solid #ffffff' : 'none' }}
+            style={{ borderBottom: activeTab === 'analytics' ? '2px solid var(--accent-blue)' : 'none' }}
           >
             User Trends and Analytics
           </button>
@@ -117,7 +117,7 @@ const AdminPanelScreen = () => {
               <div>Lists all the popular cities where the users are visiting based on the current user trends.</div>
               <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {stats.topCities.map((city, idx) => (
-                  <div key={idx} style={{ padding: '10px', border: '1px solid #ffffff' }}>
+                  <div key={idx} style={{ padding: '10px', border: '1px solid var(--border-primary)' }}>
                     {city.name}, {city.country} - Score: {city.popularityScore}
                   </div>
                 ))}
@@ -131,7 +131,7 @@ const AdminPanelScreen = () => {
               <div>List all the popular activities that the users are doing based on the current user trend data.</div>
               <div style={{ marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {stats.topActivities.slice(0, 10).map((item, idx) => (
-                  <div key={idx} style={{ padding: '10px', border: '1px solid #ffffff' }}>
+                  <div key={idx} style={{ padding: '10px', border: '1px solid var(--border-primary)' }}>
                     {item.activity?.name} - Used {item.usageCount} times
                   </div>
                 ))}
@@ -151,7 +151,7 @@ const AdminPanelScreen = () => {
                       <div style={{ 
                         width: '100%', 
                         height: `${(item.count / Math.max(...stats.userTrend.map(t => t.count), 1)) * 180}px`,
-                        backgroundColor: '#ffffff',
+                        backgroundColor: 'var(--accent-blue)',
                         marginBottom: '5px'
                       }} />
                       <div style={{ fontSize: '10px', transform: 'rotate(-45deg)', transformOrigin: 'top left' }}>
@@ -180,5 +180,5 @@ const AdminPanelScreen = () => {
   );
 };
 
-export default AdminPanelScreen;
+export default AdminPanel;
 

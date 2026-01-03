@@ -32,7 +32,7 @@ interface Trip {
   sections: Section[];
 }
 
-const CalendarViewScreen = () => {
+const CalendarView = () => {
   const { tripId } = useParams<{ tripId: string }>();
   const [trip, setTrip] = useState<Trip | null>(null);
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -60,7 +60,7 @@ const CalendarViewScreen = () => {
 
   if (loading || !trip) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div>Loading...</div>
       </div>
     );
@@ -123,11 +123,11 @@ const CalendarViewScreen = () => {
   const weekDays = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '20px' }}>Calendar View Screen (Screen 11)</h1>
+        <h1 style={{ marginBottom: '20px' }}>Calendar View</h1>
 
         <SearchBar />
 
@@ -166,7 +166,7 @@ const CalendarViewScreen = () => {
               
               let bgColor = 'transparent';
               if (data.isOverBudget) bgColor = 'rgba(255, 107, 107, 0.3)';
-              else if (data.hasGap && isInTrip) bgColor = 'rgba(255, 255, 255, 0.1)';
+              else if (data.hasGap && isInTrip) bgColor = 'rgba(0, 0, 0, 0.05)';
               else if (data.hasOverlap) bgColor = 'rgba(255, 200, 0, 0.2)';
               else if (data.hasActivity) bgColor = 'rgba(100, 200, 100, 0.2)';
 
@@ -178,7 +178,7 @@ const CalendarViewScreen = () => {
                     minHeight: '80px',
                     padding: '5px',
                     backgroundColor: bgColor,
-                    borderColor: isToday ? '#00ff00' : '#ffffff',
+                    borderColor: isToday ? '#4ade80' : 'var(--border-primary)',
                   }}
                 >
                   <div style={{ fontWeight: isToday ? 'bold' : 'normal' }}>
@@ -204,5 +204,5 @@ const CalendarViewScreen = () => {
   );
 };
 
-export default CalendarViewScreen;
+export default CalendarView;
 

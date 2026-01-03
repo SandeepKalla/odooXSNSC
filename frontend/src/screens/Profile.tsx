@@ -13,7 +13,7 @@ interface Trip {
   status: string;
 }
 
-const ProfileScreen = () => {
+const Profile = () => {
   const { user } = useAuth();
   const [preplannedTrips, setPreplannedTrips] = useState<Trip[]>([]);
   const [previousTrips, setPreviousTrips] = useState<Trip[]>([]);
@@ -51,18 +51,18 @@ const ProfileScreen = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '30px' }}>User Profile Pages (Screen 7)</h1>
+        <h1 style={{ marginBottom: '30px' }}>User Profile</h1>
 
         <div style={{ display: 'flex', gap: '30px', marginBottom: '40px', flexWrap: 'wrap' }}>
           <div style={{ 
             width: '100px', 
             height: '100px', 
             borderRadius: '50%', 
-            border: '1px solid #ffffff',
+            border: '1px solid var(--border-primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -184,5 +184,5 @@ const ProfileScreen = () => {
   );
 };
 
-export default ProfileScreen;
+export default Profile;
 

@@ -14,7 +14,7 @@ interface Trip {
   budget: number;
 }
 
-const TripListingScreen = () => {
+const TripListing = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -40,9 +40,9 @@ const TripListingScreen = () => {
   const upcomingTrips = trips.filter(t => t.status === 'UPCOMING');
   const completedTrips = trips.filter(t => t.status === 'COMPLETED');
 
-  const TripCard = ({ trip }: { trip: Trip }) => (
+  const TripCard = ({ trip, colorClass }: { trip: Trip; colorClass: string }) => (
     <div
-      className="container"
+      className={`container ${colorClass}`}
       style={{
         padding: '20px',
         cursor: 'pointer',
@@ -64,11 +64,11 @@ const TripListingScreen = () => {
   );
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '20px' }}>User Trip Listing (Screen 6)</h1>
+        <h1 style={{ marginBottom: '20px' }}>User Trip Listing</h1>
 
         <SearchBar />
 
@@ -78,7 +78,10 @@ const TripListingScreen = () => {
             {loading ? (
               <div>Loading...</div>
             ) : ongoingTrips.length > 0 ? (
-              ongoingTrips.map(trip => <TripCard key={trip.id} trip={trip} />)
+              ongoingTrips.map((trip, idx) => {
+                const colorClasses = ['card-green', 'card-blue', 'card-cyan'];
+                return <TripCard key={trip.id} trip={trip} colorClass={colorClasses[idx % colorClasses.length]} />;
+              })
             ) : (
               <div className="container" style={{ padding: '20px', textAlign: 'center' }}>
                 No ongoing trips
@@ -93,7 +96,10 @@ const TripListingScreen = () => {
             {loading ? (
               <div>Loading...</div>
             ) : upcomingTrips.length > 0 ? (
-              upcomingTrips.map(trip => <TripCard key={trip.id} trip={trip} />)
+              upcomingTrips.map((trip, idx) => {
+                const colorClasses = ['card-blue', 'card-purple', 'card-pink'];
+                return <TripCard key={trip.id} trip={trip} colorClass={colorClasses[idx % colorClasses.length]} />;
+              })
             ) : (
               <div className="container" style={{ padding: '20px', textAlign: 'center' }}>
                 No upcoming trips
@@ -108,7 +114,10 @@ const TripListingScreen = () => {
             {loading ? (
               <div>Loading...</div>
             ) : completedTrips.length > 0 ? (
-              completedTrips.map(trip => <TripCard key={trip.id} trip={trip} />)
+              completedTrips.map((trip, idx) => {
+                const colorClasses = ['card-orange', 'card-purple', 'card-cyan'];
+                return <TripCard key={trip.id} trip={trip} colorClass={colorClasses[idx % colorClasses.length]} />;
+              })
             ) : (
               <div className="container" style={{ padding: '20px', textAlign: 'center' }}>
                 No completed trips
@@ -121,5 +130,5 @@ const TripListingScreen = () => {
   );
 };
 
-export default TripListingScreen;
+export default TripListing;
 

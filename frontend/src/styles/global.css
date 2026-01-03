@@ -1,0 +1,211 @@
+/* Color Palette */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f5f5f5;
+  --text-primary: #1a1a1a;
+  --text-secondary: rgba(26, 26, 26, 0.8);
+  --text-muted: rgba(26, 26, 26, 0.6);
+  
+  --border-primary: #e0e0e0;
+  --border-secondary: rgba(0, 0, 0, 0.2);
+  
+  --accent-blue: #4a9eff;
+  --accent-green: #4ade80;
+  --accent-purple: #a78bfa;
+  --accent-orange: #fb923c;
+  --accent-pink: #f472b6;
+  --accent-cyan: #22d3ee;
+  
+  --error-red: #ff6b6b;
+  --warning-yellow: #fbbf24;
+  --success-green: #4ade80;
+  
+  --hover-overlay: rgba(0, 0, 0, 0.05);
+  --active-overlay: rgba(0, 0, 0, 0.1);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* Clean white theme */
+.container {
+  border: 1px solid var(--border-primary);
+  background-color: var(--bg-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.input {
+  border: 1px solid var(--border-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.input:focus {
+  border-color: var(--accent-blue);
+}
+
+.input::placeholder {
+  color: var(--text-muted);
+}
+
+.button {
+  border: 1px solid var(--border-primary);
+  background-color: transparent;
+  color: var(--text-primary);
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.button:hover {
+  background-color: var(--hover-overlay);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.button:active {
+  background-color: var(--active-overlay);
+}
+
+.button.primary {
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+}
+
+.button.success {
+  border-color: var(--success-green);
+  color: var(--success-green);
+}
+
+.textarea {
+  border: 1px solid var(--border-primary);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 8px 12px;
+  font-size: 16px;
+  outline: none;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.textarea:focus {
+  border-color: var(--accent-blue);
+}
+
+.textarea::placeholder {
+  color: var(--text-muted);
+}
+
+/* Utility classes */
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.gap-2 {
+  gap: 8px;
+}
+
+.gap-4 {
+  gap: 16px;
+}
+
+.mt-4 {
+  margin-top: 16px;
+}
+
+.mb-4 {
+  margin-bottom: 16px;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.h-full {
+  height: 100%;
+}
+
+/* Overlap warning */
+.overlap-warning {
+  border-color: var(--error-red) !important;
+  background-color: rgba(255, 107, 107, 0.1) !important;
+}
+
+/* Overbudget indicator */
+.overbudget {
+  border-color: var(--error-red) !important;
+  background-color: rgba(255, 107, 107, 0.1) !important;
+}
+
+/* Color variants for cards and sections */
+.card-blue {
+  border-color: var(--accent-blue);
+  background-color: rgba(74, 158, 255, 0.1);
+}
+
+.card-green {
+  border-color: var(--accent-green);
+  background-color: rgba(74, 222, 128, 0.1);
+}
+
+.card-purple {
+  border-color: var(--accent-purple);
+  background-color: rgba(167, 139, 250, 0.1);
+}
+
+.card-orange {
+  border-color: var(--accent-orange);
+  background-color: rgba(251, 146, 60, 0.1);
+}
+
+.card-pink {
+  border-color: var(--accent-pink);
+  background-color: rgba(244, 114, 182, 0.1);
+}
+
+.card-cyan {
+  border-color: var(--accent-cyan);
+  background-color: rgba(34, 211, 238, 0.1);
+}
+
