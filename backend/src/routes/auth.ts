@@ -139,6 +139,44 @@ router.get('/me', authRequired, async (req: AuthRequest, res, next) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.userId },
+      include: {
+        savedDestinations: {
+          include: {
+            city: true,
+          },
+        },
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    const { passwordHash, ...userWithoutPassword } = user;
+    res.json({ user: userWithoutPassword });
+  } catch (error) {
+    next(error);
+  }
+});
+
+const updateProfileSchema = z.object({
+  firstName: z.string().optional(),
+  lastName: z.string().optional(),
+  phone: z.string().optional(),
+  city: z.string().optional(),
+  country: z.string().optional(),
+  additionalInfo: z.string().optional(),
+  profilePhoto: z.string().optional(),
+});
+
+// PUT /api/auth/profile
+router.put('/profile', authRequired, async (req: AuthRequest, res, next) => {
+  try {
+    const data = updateProfileSchema.parse(req.body);
+
+    const updated = await prisma.user.update({
+      where: { id: req.userId! },
+      data,
       select: {
         id: true,
         email: true,
@@ -150,16 +188,61 @@ router.get('/me', authRequired, async (req: AuthRequest, res, next) => {
         country: true,
         additionalInfo: true,
         profilePhoto: true,
-        createdAt: true,
-        updatedAt: true,
       },
     });
 
-    if (!user) {
-      return res.status(404).json({ error: 'User not found' });
+    res.json({ user: updated });
+  } catch (error: any) {
+    if (error.name === 'ZodError') {
+      return res.status(400).json({ error: error.errors });
+    }
+    next(error);
+  }
+});
+
+// POST /api/auth/saved-destinations
+router.post('/saved-destinations', authRequired, async (req: AuthRequest, res, next) => {
+  try {
+    const { cityId } = req.body;
+
+    if (!cityId) {
+      return res.status(400).json({ error: 'cityId is required' });
     }
 
-    res.json({ user });
+    const saved = await prisma.savedDestination.upsert({
+      where: {
+        userId_cityId: {
+          userId: req.userId!,
+          cityId,
+        },
+      },
+      update: {},
+      create: {
+        userId: req.userId!,
+        cityId,
+      },
+      include: {
+        city: true,
+      },
+    });
+
+    res.json({ savedDestination: saved });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/auth/saved-destinations/:cityId
+router.delete('/saved-destinations/:cityId', authRequired, async (req: AuthRequest, res, next) => {
+  try {
+    await prisma.savedDestination.deleteMany({
+      where: {
+        userId: req.userId!,
+        cityId: req.params.cityId,
+      },
+    });
+
+    res.json({ message: 'Destination removed' });
   } catch (error) {
     next(error);
   }

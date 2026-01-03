@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import { api } from '../services/api';
+import { getProfilePhotoUrl } from '../utils/images';
 import '../styles/global.css';
 
 interface Trip {
@@ -73,18 +74,23 @@ const Community = () => {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               {trips.map(trip => (
                 <div key={trip.id} className="container" style={{ padding: '20px', display: 'flex', gap: '20px', alignItems: 'center' }}>
-                  <div style={{ 
-                    width: '50px', 
-                    height: '50px', 
-                    borderRadius: '50%', 
-                    border: '1px solid var(--border-primary)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    flexShrink: 0
-                  }}>
-                    {trip.user.username[0].toUpperCase()}
-                  </div>
+                  <img
+                    src={getProfilePhotoUrl(
+                      trip.user.firstName && trip.user.lastName
+                        ? `${trip.user.firstName} ${trip.user.lastName}`
+                        : trip.user.username,
+                      50
+                    )}
+                    alt={trip.user.username}
+                    style={{
+                      width: '50px',
+                      height: '50px',
+                      borderRadius: '50%',
+                      border: '1px solid var(--border-primary)',
+                      objectFit: 'cover',
+                      flexShrink: 0
+                    }}
+                  />
                   <div style={{ flex: 1 }}>
                     <div style={{ fontWeight: 'bold', marginBottom: '5px' }}>{trip.name}</div>
                     <div style={{ fontSize: '14px' }}>

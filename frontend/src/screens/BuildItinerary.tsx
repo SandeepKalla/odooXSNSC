@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import Header from '../components/Header';
 import { api } from '../services/api';
+import { getActivityImageUrl } from '../utils/images';
 import '../styles/global.css';
 
 interface Section {
@@ -28,6 +29,7 @@ interface Activity {
 
 const BuildItinerary = () => {
   const { tripId } = useParams<{ tripId: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const [trip, setTrip] = useState<any>(null);
   const [sections, setSections] = useState<Section[]>([]);
@@ -35,6 +37,8 @@ const BuildItinerary = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [editingSection, setEditingSection] = useState<string | null>(null);
+  const [loadingPlaces, setLoadingPlaces] = useState(false);
+  const [showPlacesLoader, setShowPlacesLoader] = useState(false);
 
   useEffect(() => {
     if (tripId) {
@@ -42,6 +46,26 @@ const BuildItinerary = () => {
       loadActivities();
     }
   }, [tripId]);
+
+  // Handle activity from search page
+  useEffect(() => {
+    const activityId = searchParams.get('activityId');
+    if (activityId && sections.length > 0 && availableActivities.length > 0 && !loading) {
+      // Auto-select the first section and add the activity
+      const firstSection = sections[0];
+      const activity = availableActivities.find(a => a.id === activityId);
+      if (firstSection && activity) {
+        // Small delay to ensure UI is ready
+        const timer = setTimeout(() => {
+          handleAddActivity(firstSection.id, activityId);
+          // Remove query param
+          navigate(`/trips/builder/${tripId}`, { replace: true });
+        }, 500);
+        return () => clearTimeout(timer);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sections.length, availableActivities.length, searchParams, tripId, loading]);
 
   const loadTrip = async () => {
     try {
@@ -68,28 +92,107 @@ const BuildItinerary = () => {
     }
   };
 
+  const loadPlacesFromOpenTripMap = async (sectionId: string) => {
+    if (!trip) return;
+    
+    setLoadingPlaces(true);
+    setShowPlacesLoader(true);
+    try {
+      // Get city from section or trip
+      const citiesResponse = await api.searchCities();
+      if (citiesResponse.data?.cities && citiesResponse.data.cities.length > 0) {
+        const city = citiesResponse.data.cities[0]; // Use first city for now
+        
+        if (city.latitude && city.longitude) {
+          const placesResponse = await api.getCityPlaces(city.id, 'interesting_places', 5000);
+          if (placesResponse.data?.places) {
+            // Convert OpenTripMap places to activities format
+            const newActivities = placesResponse.data.places.slice(0, 10).map((place: any) => ({
+              id: `opentripmap-${place.xid}`,
+              name: place.name,
+              type: 'EXPERIENCE',
+              cost: 0, // Will be updated when details are loaded
+              duration: 120,
+              city: {
+                name: city.name,
+                country: city.country,
+              },
+              description: `Attraction in ${city.name}`,
+              xid: place.xid, // Store for getting details
+            }));
+            
+            // Add to available activities
+            setAvailableActivities(prev => [...prev, ...newActivities]);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Failed to load places from OpenTripMap:', err);
+    } finally {
+      setLoadingPlaces(false);
+      setShowPlacesLoader(false);
+    }
+  };
+
   const handleAddSection = async () => {
     if (!trip) return;
 
     try {
-      const today = new Date();
-      const tomorrow = new Date(today);
-      tomorrow.setDate(tomorrow.getDate() + 1);
+      // Use trip dates instead of today/tomorrow
+      const tripStartDate = new Date(trip.startDate);
+      const tripEndDate = new Date(trip.endDate);
+      
+      // Calculate default dates within trip range
+      // If there are existing sections, start after the last one
+      let defaultStartDate = tripStartDate;
+      let defaultEndDate = new Date(tripStartDate);
+      defaultEndDate.setDate(defaultEndDate.getDate() + 1);
+      
+      if (sections.length > 0) {
+        // Find the latest end date
+        const latestEndDate = sections.reduce((latest, section) => {
+          const sectionEnd = new Date(section.endDate);
+          return sectionEnd > latest ? sectionEnd : latest;
+        }, new Date(sections[0].endDate));
+        
+        // Start the new section after the latest end date
+        defaultStartDate = new Date(latestEndDate);
+        defaultStartDate.setDate(defaultStartDate.getDate() + 1);
+        
+        // End date is one day after start, but not beyond trip end
+        defaultEndDate = new Date(defaultStartDate);
+        defaultEndDate.setDate(defaultEndDate.getDate() + 1);
+        
+        // Ensure dates are within trip range
+        if (defaultStartDate < tripStartDate) {
+          defaultStartDate = tripStartDate;
+        }
+        if (defaultEndDate > tripEndDate) {
+          defaultEndDate = tripEndDate;
+        }
+        if (defaultStartDate >= defaultEndDate) {
+          // If no room for new section, use trip end date
+          defaultEndDate = tripEndDate;
+          defaultStartDate = new Date(tripEndDate);
+          defaultStartDate.setDate(defaultStartDate.getDate() - 1);
+        }
+      }
 
       const response = await api.createSection(tripId!, {
         title: `Section ${sections.length + 1}`,
         notes: '',
-        startDate: today.toISOString().split('T')[0],
-        endDate: tomorrow.toISOString().split('T')[0],
+        startDate: defaultStartDate.toISOString().split('T')[0],
+        endDate: defaultEndDate.toISOString().split('T')[0],
         budget: 0,
         order: sections.length,
       });
 
       if (response.data?.section) {
         await loadTrip();
+        setError(''); // Clear any previous errors
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to add section');
+      setError(err.message || 'Failed to add section. Make sure the dates are within your trip date range.');
     }
   };
 
@@ -193,10 +296,24 @@ const BuildItinerary = () => {
                   {section.activities && section.activities.length > 0 ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       {section.activities.map((sa: any) => (
-                        <div key={sa.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', border: '1px solid var(--border-primary)' }}>
-                          <div>
-                            <div>{sa.activity.name}</div>
-                            <div style={{ fontSize: '12px' }}>{sa.activity.city.name}</div>
+                        <div key={sa.id} style={{ display: 'flex', gap: '10px', alignItems: 'center', padding: '10px', border: '1px solid var(--border-primary)' }}>
+                          <img
+                            src={getActivityImageUrl(sa.activity.name, sa.activity.type)}
+                            alt={sa.activity.name}
+                            style={{
+                              width: '60px',
+                              height: '60px',
+                              objectFit: 'cover',
+                              borderRadius: '4px',
+                              flexShrink: 0
+                            }}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
+                          <div style={{ flex: 1 }}>
+                            <div style={{ fontWeight: 'bold' }}>{sa.activity.name}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{sa.activity.city.name}</div>
                           </div>
                           <button
                             className="button"
@@ -214,10 +331,25 @@ const BuildItinerary = () => {
                     </div>
                   )}
 
-                  <ActivitySelector
-                    activities={availableActivities}
-                    onSelect={(activityId) => handleAddActivity(section.id, activityId)}
-                  />
+                  <div style={{ marginTop: '15px' }}>
+                    <button
+                      className="button"
+                      onClick={() => loadPlacesFromOpenTripMap(section.id)}
+                      disabled={loadingPlaces}
+                      style={{ marginBottom: '10px', width: '100%' }}
+                    >
+                      {loadingPlaces ? 'Loading Real Attractions...' : '🌍 Discover Real Attractions'}
+                    </button>
+                    {showPlacesLoader && (
+                      <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '10px' }}>
+                        Fetching nearby attractions from OpenTripMap...
+                      </div>
+                    )}
+                    <ActivitySelector
+                      activities={availableActivities}
+                      onSelect={(activityId) => handleAddActivity(section.id, activityId)}
+                    />
+                  </div>
                 </div>
               </>
             )}
@@ -368,8 +500,24 @@ const ActivitySelector: React.FC<ActivitySelectorProps> = ({ activities, onSelec
                   setShowSelector(false);
                 }}
               >
-                <div>{activity.name}</div>
-                <div style={{ fontSize: '12px' }}>${activity.cost} - {activity.city.name}</div>
+                <img
+                  src={getActivityImageUrl(activity.name, activity.type)}
+                  alt={activity.name}
+                  style={{
+                    width: '50px',
+                    height: '50px',
+                    objectFit: 'cover',
+                    borderRadius: '4px',
+                    flexShrink: 0
+                  }}
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 'bold' }}>{activity.name}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>${activity.cost} - {activity.city.name}</div>
+                </div>
               </div>
             ))}
           </div>

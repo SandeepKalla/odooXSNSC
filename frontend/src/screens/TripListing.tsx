@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import { api } from '../services/api';
+import { getTripImageUrl } from '../utils/images';
 import '../styles/global.css';
 
 interface Trip {
@@ -40,24 +41,76 @@ const TripListing = () => {
   const upcomingTrips = trips.filter(t => t.status === 'UPCOMING');
   const completedTrips = trips.filter(t => t.status === 'COMPLETED');
 
+  const handleDelete = async (tripId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this trip?')) {
+      try {
+        await api.deleteTrip(tripId);
+        loadTrips();
+      } catch (error) {
+        console.error('Failed to delete trip:', error);
+        alert('Failed to delete trip');
+      }
+    }
+  };
+
   const TripCard = ({ trip, colorClass }: { trip: Trip; colorClass: string }) => (
     <div
       className={`container ${colorClass}`}
       style={{
-        padding: '20px',
-        cursor: 'pointer',
-        minHeight: '150px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        padding: 0,
+        overflow: 'hidden',
+        position: 'relative',
+        minHeight: '200px',
       }}
-      onClick={() => navigate(`/trips/view/${trip.id}`)}
     >
-      <div style={{ textAlign: 'center' }}>
-        <div style={{ fontWeight: 'bold', marginBottom: '10px' }}>{trip.name}</div>
-        <div style={{ fontSize: '14px' }}>Short Over View of the Trip</div>
-        <div style={{ fontSize: '12px', marginTop: '5px' }}>
+      <img
+        src={getTripImageUrl(trip.name)}
+        alt={trip.name}
+        style={{
+          width: '100%',
+          height: '150px',
+          objectFit: 'cover',
+          display: 'block',
+          cursor: 'pointer'
+        }}
+        onClick={() => navigate(`/trips/view/${trip.id}`)}
+        onError={(e) => {
+          (e.target as HTMLImageElement).style.display = 'none';
+        }}
+      />
+      <div style={{
+        padding: '15px',
+        background: 'white'
+      }}>
+        <div style={{ fontWeight: 'bold', marginBottom: '5px', cursor: 'pointer' }} onClick={() => navigate(`/trips/view/${trip.id}`)}>
+          {trip.name}
+        </div>
+        <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '10px' }}>
           {new Date(trip.startDate).toLocaleDateString()} - {new Date(trip.endDate).toLocaleDateString()}
+        </div>
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <button
+            className="button"
+            onClick={() => navigate(`/trips/view/${trip.id}`)}
+            style={{ flex: 1, padding: '5px 10px', fontSize: '12px' }}
+          >
+            View
+          </button>
+          <button
+            className="button"
+            onClick={() => navigate(`/trips/builder/${trip.id}`)}
+            style={{ flex: 1, padding: '5px 10px', fontSize: '12px' }}
+          >
+            Edit
+          </button>
+          <button
+            className="button"
+            onClick={(e) => handleDelete(trip.id, e)}
+            style={{ flex: 1, padding: '5px 10px', fontSize: '12px', backgroundColor: '#ff6b6b', color: 'white' }}
+          >
+            Delete
+          </button>
         </div>
       </div>
     </div>

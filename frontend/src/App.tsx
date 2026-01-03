@@ -13,6 +13,8 @@ import Community from './screens/Community';
 import CalendarView from './screens/CalendarView';
 import AdminPanel from './screens/AdminPanel';
 import PublicTrip from './screens/PublicTrip';
+import BudgetBreakdown from './screens/BudgetBreakdown';
+import CitySearch from './screens/CitySearch';
 import PrivateRoute from './components/PrivateRoute';
 
 function App() {
@@ -80,6 +82,14 @@ function App() {
             }
           />
           <Route
+            path="/search/cities"
+            element={
+              <PrivateRoute>
+                <CitySearch />
+              </PrivateRoute>
+            }
+          />
+          <Route
             path="/community"
             element={
               <PrivateRoute>
@@ -100,6 +110,14 @@ function App() {
             element={
               <PrivateRoute>
                 <AdminPanel />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/trips/budget/:tripId"
+            element={
+              <PrivateRoute>
+                <BudgetBreakdown />
               </PrivateRoute>
             }
           />

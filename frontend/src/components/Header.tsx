@@ -5,7 +5,7 @@ interface HeaderProps {
   showSearch?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ showSearch = false }) => {
+const Header: React.FC<HeaderProps> = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -29,9 +29,33 @@ const Header: React.FC<HeaderProps> = ({ showSearch = false }) => {
       
       <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         {user && (
-          <span style={{ fontSize: '16px' }}>
-            {user.username || user.firstName || user.email}
-          </span>
+          <>
+            <Link 
+              to="/profile" 
+              style={{ 
+                color: 'var(--text-primary)', 
+                textDecoration: 'none', 
+                fontSize: '16px',
+                cursor: 'pointer'
+              }}
+            >
+              {user.username || user.firstName || user.email}
+            </Link>
+            <Link 
+              to="/admin" 
+              style={{ 
+                color: 'var(--text-primary)', 
+                textDecoration: 'none', 
+                fontSize: '14px',
+                cursor: 'pointer',
+                padding: '8px 12px',
+                border: '1px solid var(--border-primary)',
+                borderRadius: '4px'
+              }}
+            >
+              Admin
+            </Link>
+          </>
         )}
         <button className="button" onClick={handleLogout} style={{ padding: '8px 16px' }}>
           Logout

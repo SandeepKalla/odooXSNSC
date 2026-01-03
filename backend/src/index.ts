@@ -9,6 +9,7 @@ import activityRoutes from './routes/activities';
 import searchRoutes from './routes/search';
 import publicRoutes from './routes/public';
 import adminRoutes from './routes/admin';
+import externalRoutes from './routes/external';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ app.use('/api/sections', activityRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/public', publicRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/external', externalRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

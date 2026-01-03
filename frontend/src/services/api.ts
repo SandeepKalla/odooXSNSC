@@ -179,6 +179,63 @@ class ApiClient {
   async getAdminStats() {
     return this.request('/admin/stats');
   }
+
+  // Profile
+  async updateProfile(profileData: any) {
+    return this.request('/auth/profile', {
+      method: 'PUT',
+      body: JSON.stringify(profileData),
+    });
+  }
+
+  async saveDestination(cityId: string) {
+    return this.request('/auth/saved-destinations', {
+      method: 'POST',
+      body: JSON.stringify({ cityId }),
+    });
+  }
+
+  async removeSavedDestination(cityId: string) {
+    return this.request(`/auth/saved-destinations/${cityId}`, {
+      method: 'DELETE',
+    });
+  }
+
+  // External APIs
+  async getCountryData(countryName: string) {
+    return this.request(`/external/country/${countryName}`);
+  }
+
+  async getCityImages(cityId: string) {
+    return this.request(`/external/city/${cityId}/images`);
+  }
+
+  async getCityWeather(cityId: string) {
+    return this.request(`/external/city/${cityId}/weather`);
+  }
+
+  async getCityPlaces(cityId: string, kinds?: string, radius?: number) {
+    const params = new URLSearchParams();
+    if (kinds) params.append('kinds', kinds);
+    if (radius) params.append('radius', radius.toString());
+    return this.request(`/external/city/${cityId}/places?${params.toString()}`);
+  }
+
+  async getPlaceDetails(xid: string) {
+    return this.request(`/external/place/${xid}`);
+  }
+
+  async getExchangeRates(baseCurrency?: string) {
+    const query = baseCurrency ? `?base=${baseCurrency}` : '';
+    return this.request(`/external/exchange-rates${query}`);
+  }
+
+  async geocodeCity(cityName: string, country?: string) {
+    return this.request('/external/geocode', {
+      method: 'POST',
+      body: JSON.stringify({ cityName, country }),
+    });
+  }
 }
 
 export const api = new ApiClient();

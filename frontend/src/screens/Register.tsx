@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { getProfilePhotoUrl } from '../utils/images';
 import '../styles/global.css';
 
 const Register = () => {
@@ -48,17 +49,22 @@ const Register = () => {
         <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Registration</h1>
         
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
-          <div style={{ 
-            width: '100px', 
-            height: '100px', 
-            borderRadius: '50%', 
-            border: '1px solid var(--border-primary)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center'
-          }}>
-            Photo
-          </div>
+          <img
+            src={getProfilePhotoUrl(
+              formData.firstName && formData.lastName 
+                ? `${formData.firstName} ${formData.lastName}` 
+                : formData.username || 'User',
+              100
+            )}
+            alt="Profile"
+            style={{
+              width: '100px',
+              height: '100px',
+              borderRadius: '50%',
+              border: '1px solid var(--border-primary)',
+              objectFit: 'cover'
+            }}
+          />
         </div>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
