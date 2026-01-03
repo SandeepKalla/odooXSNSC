@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import '../styles/global.css';
 
-const LoginScreen = () => {
+const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -27,16 +27,16 @@ const LoginScreen = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', backgroundColor: '#ffffff' }}>
       <div className="container" style={{ padding: '40px', maxWidth: '400px', width: '100%' }}>
-        <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Login Screen (Screen 1)</h1>
+        <h1 style={{ textAlign: 'center', marginBottom: '30px' }}>Login</h1>
         
         <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
           <div style={{ 
             width: '100px', 
             height: '100px', 
             borderRadius: '50%', 
-            border: '1px solid #ffffff',
+            border: '1px solid var(--border-primary)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center'
@@ -79,7 +79,7 @@ const LoginScreen = () => {
         </form>
 
         <div style={{ marginTop: '20px', textAlign: 'center' }}>
-          <Link to="/register" style={{ color: '#ffffff', textDecoration: 'underline' }}>
+          <Link to="/register" style={{ color: 'var(--accent-blue)', textDecoration: 'underline' }}>
             Don't have an account? Register
           </Link>
         </div>
@@ -88,5 +88,5 @@ const LoginScreen = () => {
   );
 };
 
-export default LoginScreen;
+export default Login;
 

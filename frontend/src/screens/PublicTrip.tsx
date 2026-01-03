@@ -4,7 +4,7 @@ import Header from '../components/Header';
 import { api } from '../services/api';
 import '../styles/global.css';
 
-const PublicTripScreen = () => {
+const PublicTrip = () => {
   const { slug } = useParams<{ slug: string }>();
   const [trip, setTrip] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +31,7 @@ const PublicTripScreen = () => {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div>Loading...</div>
       </div>
     );
@@ -39,7 +39,7 @@ const PublicTripScreen = () => {
 
   if (!trip) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div>Public trip not found</div>
       </div>
     );
@@ -47,11 +47,11 @@ const PublicTripScreen = () => {
 
   // Render read-only itinerary view
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Header />
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
         <h1 style={{ marginBottom: '20px' }}>Public Trip: {trip.name}</h1>
-        <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid #ffffff' }}>
+        <div style={{ marginBottom: '20px', padding: '15px', border: '1px solid var(--border-primary)' }}>
           <div>This is a read-only view of a public trip.</div>
           <button
             className="button"
@@ -86,7 +86,7 @@ const PublicTripScreen = () => {
                   <div style={{ marginTop: '15px' }}>
                     <h4>Activities:</h4>
                     {section.activities.map((sa: any) => (
-                      <div key={sa.id} style={{ marginTop: '10px', padding: '10px', border: '1px solid #ffffff' }}>
+                      <div key={sa.id} style={{ marginTop: '10px', padding: '10px', border: '1px solid var(--border-primary)' }}>
                         <div>{sa.activity.name}</div>
                         <div style={{ fontSize: '12px' }}>{sa.activity.city.name}</div>
                       </div>
@@ -102,5 +102,5 @@ const PublicTripScreen = () => {
   );
 };
 
-export default PublicTripScreen;
+export default PublicTrip;
 

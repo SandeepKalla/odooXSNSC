@@ -20,9 +20,10 @@ const Header: React.FC<HeaderProps> = ({ showSearch = false }) => {
       justifyContent: 'space-between', 
       alignItems: 'center',
       padding: '20px',
-      borderBottom: '1px solid #ffffff'
+      borderBottom: '1px solid var(--border-primary)',
+      backgroundColor: '#ffffff'
     }}>
-      <Link to="/dashboard" style={{ color: '#ffffff', textDecoration: 'none', fontSize: '24px', fontWeight: 'bold' }}>
+      <Link to="/dashboard" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontSize: '24px', fontWeight: 'bold' }}>
         GlobeTrotter
       </Link>
       

@@ -17,7 +17,7 @@ interface Trip {
   };
 }
 
-const CommunityScreen = () => {
+const Community = () => {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -51,11 +51,11 @@ const CommunityScreen = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '20px' }}>Community tab Screen (Screen 10)</h1>
+        <h1 style={{ marginBottom: '20px' }}>Community</h1>
 
         <SearchBar />
 
@@ -77,7 +77,7 @@ const CommunityScreen = () => {
                     width: '50px', 
                     height: '50px', 
                     borderRadius: '50%', 
-                    border: '1px solid #ffffff',
+                    border: '1px solid var(--border-primary)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -138,5 +138,5 @@ const CommunityScreen = () => {
   );
 };
 
-export default CommunityScreen;
+export default Community;
 

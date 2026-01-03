@@ -18,7 +18,7 @@ interface Activity {
   };
 }
 
-const SearchScreen = () => {
+const Search = () => {
   const [searchParams] = useSearchParams();
   const [activities, setActivities] = useState<Activity[]>([]);
   const [loading, setLoading] = useState(false);
@@ -47,11 +47,11 @@ const SearchScreen = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '20px' }}>Activity Search Pages / City Search Page (Screen 8)</h1>
+        <h1 style={{ marginBottom: '20px' }}>Activity Search</h1>
 
         <SearchBar
           placeholder={searchQuery}
@@ -97,5 +97,5 @@ const SearchScreen = () => {
   );
 };
 
-export default SearchScreen;
+export default Search;
 

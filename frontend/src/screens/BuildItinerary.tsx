@@ -26,7 +26,7 @@ interface Activity {
   };
 }
 
-const BuildItineraryScreen = () => {
+const BuildItinerary = () => {
   const { tripId } = useParams<{ tripId: string }>();
   const navigate = useNavigate();
   const [trip, setTrip] = useState<any>(null);
@@ -137,18 +137,18 @@ const BuildItineraryScreen = () => {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div>Loading...</div>
       </div>
     );
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '30px' }}>Build Itenary Screen (Screen 5)</h1>
+        <h1 style={{ marginBottom: '30px' }}>Build Itinerary</h1>
 
         {error && <div style={{ color: '#ff6b6b', marginBottom: '20px' }}>{error}</div>}
 
@@ -193,7 +193,7 @@ const BuildItineraryScreen = () => {
                   {section.activities && section.activities.length > 0 ? (
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                       {section.activities.map((sa: any) => (
-                        <div key={sa.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', border: '1px solid #ffffff' }}>
+                        <div key={sa.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', border: '1px solid var(--border-primary)' }}>
                           <div>
                             <div>{sa.activity.name}</div>
                             <div style={{ fontSize: '12px' }}>{sa.activity.city.name}</div>
@@ -209,7 +209,7 @@ const BuildItineraryScreen = () => {
                       ))}
                     </div>
                   ) : (
-                    <div style={{ padding: '20px', textAlign: 'center', border: '1px solid #ffffff' }}>
+                    <div style={{ padding: '20px', textAlign: 'center', border: '1px solid var(--border-primary)' }}>
                       No activities added yet
                     </div>
                   )}
@@ -345,7 +345,7 @@ const ActivitySelector: React.FC<ActivitySelectorProps> = ({ activities, onSelec
       </button>
 
       {showSelector && (
-        <div style={{ marginTop: '15px', border: '1px solid #ffffff', padding: '15px' }}>
+        <div style={{ marginTop: '15px', border: '1px solid var(--border-primary)', padding: '15px' }}>
           <input
             type="text"
             className="input"
@@ -360,7 +360,7 @@ const ActivitySelector: React.FC<ActivitySelectorProps> = ({ activities, onSelec
                 key={activity.id}
                 style={{
                   padding: '10px',
-                  border: '1px solid #ffffff',
+                  border: '1px solid var(--border-primary)',
                   cursor: 'pointer',
                 }}
                 onClick={() => {
@@ -379,5 +379,5 @@ const ActivitySelector: React.FC<ActivitySelectorProps> = ({ activities, onSelec
   );
 };
 
-export default BuildItineraryScreen;
+export default BuildItinerary;
 

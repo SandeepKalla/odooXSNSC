@@ -42,7 +42,7 @@ interface Trip {
   sections: Section[];
 }
 
-const ItineraryViewScreen = () => {
+const ItineraryView = () => {
   const { tripId } = useParams<{ tripId: string }>();
   const navigate = useNavigate();
   const [trip, setTrip] = useState<Trip | null>(null);
@@ -70,7 +70,7 @@ const ItineraryViewScreen = () => {
 
   if (loading) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div>Loading...</div>
       </div>
     );
@@ -78,7 +78,7 @@ const ItineraryViewScreen = () => {
 
   if (!trip) {
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#000000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <div style={{ minHeight: '100vh', backgroundColor: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div>Trip not found</div>
       </div>
     );
@@ -117,11 +117,11 @@ const ItineraryViewScreen = () => {
   const avgPerDay = numDays > 0 ? totalExpense / numDays : 0;
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#000000' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#ffffff' }}>
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '20px' }}>Itenary View Screenn with budget section (Screen 9)</h1>
+        <h1 style={{ marginBottom: '20px' }}>Itinerary View</h1>
 
         <SearchBar />
 
@@ -169,11 +169,11 @@ const ItineraryViewScreen = () => {
                 
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                   {dayActivities.map(sa => (
-                    <div key={sa.id} style={{ padding: '10px', border: '1px solid #ffffff' }}>
+                    <div key={sa.id} style={{ padding: '10px', border: '1px solid var(--border-primary)' }}>
                       ${(sa.expense || sa.activity.cost || 0).toFixed(2)}
                     </div>
                   ))}
-                  <div style={{ padding: '10px', border: '1px solid #ffffff', fontWeight: 'bold', marginTop: '10px' }}>
+                  <div style={{ padding: '10px', border: '1px solid var(--border-primary)', fontWeight: 'bold', marginTop: '10px' }}>
                     Total: ${dayTotal.toFixed(2)}
                   </div>
                 </div>
@@ -231,5 +231,5 @@ const ItineraryViewScreen = () => {
   );
 };
 
-export default ItineraryViewScreen;
+export default ItineraryView;
 
