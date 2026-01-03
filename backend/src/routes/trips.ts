@@ -8,6 +8,8 @@ const prisma = new PrismaClient();
 
 const createTripSchema = z.object({
   name: z.string().min(1),
+  description: z.string().optional(),
+  coverPhoto: z.string().optional(),
   startDate: z.string().transform((str) => new Date(str)),
   endDate: z.string().transform((str) => new Date(str)),
   budget: z.number().min(0).default(0),
@@ -15,6 +17,8 @@ const createTripSchema = z.object({
 
 const updateTripSchema = z.object({
   name: z.string().min(1).optional(),
+  description: z.string().optional(),
+  coverPhoto: z.string().optional(),
   startDate: z.string().transform((str) => new Date(str)).optional(),
   endDate: z.string().transform((str) => new Date(str)).optional(),
   budget: z.number().min(0).optional(),

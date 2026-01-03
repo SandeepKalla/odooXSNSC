@@ -4,6 +4,7 @@ import Header from '../components/Header';
 import SearchBar from '../components/SearchBar';
 import { api } from '../services/api';
 import { format, eachDayOfInterval, isSameDay } from 'date-fns';
+import { getActivityImageUrl, getTripImageUrl } from '../utils/images';
 import '../styles/global.css';
 
 interface SectionActivity {
@@ -48,12 +49,22 @@ const ItineraryView = () => {
   const [trip, setTrip] = useState<Trip | null>(null);
   const [loading, setLoading] = useState(true);
   const [readOnly, setReadOnly] = useState(false);
+  const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
+  const [weatherData, setWeatherData] = useState<any>(null);
+  const [weatherLoading, setWeatherLoading] = useState(false);
 
   useEffect(() => {
     if (tripId) {
       loadTrip();
     }
   }, [tripId]);
+
+  useEffect(() => {
+    // Load weather for the first city in the trip
+    if (trip && trip.sections.length > 0) {
+      loadWeatherForTrip();
+    }
+  }, [trip]);
 
   const loadTrip = async () => {
     try {
@@ -65,6 +76,38 @@ const ItineraryView = () => {
       console.error('Failed to load trip:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadWeatherForTrip = async () => {
+    if (!trip || !trip.sections.length) return;
+
+    // Get the first city from activities
+    const firstActivity = trip.sections
+      .flatMap(s => s.activities)
+      .find(sa => sa.activity?.city?.id);
+
+    if (!firstActivity?.activity?.city?.id) return;
+
+    setWeatherLoading(true);
+    try {
+      // We need to get city ID from the activity's city
+      // For now, let's try to get weather from the first section's city
+      const cityResponse = await api.searchCities();
+      const city = cityResponse.data?.cities?.find((c: any) => 
+        c.name === firstActivity.activity.city.name
+      );
+      
+      if (city?.id) {
+        const weatherResponse = await api.getCityWeather(city.id);
+        if (weatherResponse.data?.weather) {
+          setWeatherData(weatherResponse.data.weather);
+        }
+      }
+    } catch (error) {
+      console.error('Failed to load weather:', error);
+    } finally {
+      setWeatherLoading(false);
     }
   };
 
@@ -121,20 +164,73 @@ const ItineraryView = () => {
       <Header />
       
       <div style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-        <h1 style={{ marginBottom: '20px' }}>Itinerary View</h1>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h1 style={{ marginBottom: 0 }}>Itinerary View</h1>
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <button
+              className={`button ${viewMode === 'list' ? '' : ''}`}
+              onClick={() => setViewMode('list')}
+              style={{ padding: '8px 16px', backgroundColor: viewMode === 'list' ? 'var(--accent-blue)' : 'transparent', color: viewMode === 'list' ? 'white' : 'inherit' }}
+            >
+              List View
+            </button>
+            <button
+              className={`button ${viewMode === 'calendar' ? '' : ''}`}
+              onClick={() => setViewMode('calendar')}
+              style={{ padding: '8px 16px', backgroundColor: viewMode === 'calendar' ? 'var(--accent-blue)' : 'transparent', color: viewMode === 'calendar' ? 'white' : 'inherit' }}
+            >
+              Calendar View
+            </button>
+          </div>
+        </div>
 
         <SearchBar />
 
-        <div style={{ marginBottom: '30px' }}>
-          <h2>{trip.name} for a selected place</h2>
+        <div style={{ marginBottom: '30px', display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
+          <div>
+            <h2>{trip.name} for a selected place</h2>
+            <div style={{ fontSize: '14px', color: 'var(--text-muted)' }}>
+              {format(startDate, 'MMM dd, yyyy')} - {format(endDate, 'MMM dd, yyyy')}
+            </div>
+          </div>
+          
+          {/* Weather Widget */}
+          {weatherData && (
+            <div className="container" style={{ padding: '15px', minWidth: '200px', textAlign: 'center' }}>
+              <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '5px' }}>Current Weather</div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+                {weatherData.icon && (
+                  <img
+                    src={`https://openweathermap.org/img/wn/${weatherData.icon}@2x.png`}
+                    alt={weatherData.description}
+                    style={{ width: '50px', height: '50px' }}
+                  />
+                )}
+                <div>
+                  <div style={{ fontSize: '20px', fontWeight: 'bold' }}>{Math.round(weatherData.temp)}°C</div>
+                  <div style={{ fontSize: '12px', textTransform: 'capitalize' }}>{weatherData.description}</div>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>
+                    Feels like {Math.round(weatherData.feels_like)}°C
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+          {weatherLoading && (
+            <div className="container" style={{ padding: '15px' }}>
+              <div style={{ fontSize: '12px' }}>Loading weather...</div>
+            </div>
+          )}
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '30px' }}>
-          <div style={{ fontWeight: 'bold' }}>Physical Activity</div>
-          <div style={{ fontWeight: 'bold' }}>Expense</div>
-        </div>
+        {viewMode === 'list' ? (
+          <>
+            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '30px' }}>
+              <div style={{ fontWeight: 'bold' }}>Physical Activity</div>
+              <div style={{ fontWeight: 'bold' }}>Expense</div>
+            </div>
 
-        {days.map((day, dayIndex) => {
+            {days.map((day, dayIndex) => {
           const dateKey = format(day, 'yyyy-MM-dd');
           const dayActivities = activitiesByDay.get(dateKey) || [];
           const dayTotal = dayTotals.get(dateKey) || 0;
@@ -155,9 +251,23 @@ const ItineraryView = () => {
                       {dayActivities.map((sa, idx) => (
                         <div key={sa.id} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                           {idx > 0 && <div style={{ fontSize: '20px' }}>↓</div>}
+                          <img
+                            src={getActivityImageUrl(sa.activity.name, sa.activity.type)}
+                            alt={sa.activity.name}
+                            style={{
+                              width: '50px',
+                              height: '50px',
+                              objectFit: 'cover',
+                              borderRadius: '4px',
+                              flexShrink: 0
+                            }}
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).style.display = 'none';
+                            }}
+                          />
                           <div className="container" style={{ padding: '10px', flex: 1 }}>
-                            <div>{sa.activity.name}</div>
-                            <div style={{ fontSize: '12px' }}>{sa.activity.city.name}</div>
+                            <div style={{ fontWeight: 'bold' }}>{sa.activity.name}</div>
+                            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{sa.activity.city.name}</div>
                           </div>
                         </div>
                       ))}
@@ -181,6 +291,18 @@ const ItineraryView = () => {
             </div>
           );
         })}
+          </>
+        ) : (
+          <div style={{ marginBottom: '30px' }}>
+            <button
+              className="button"
+              onClick={() => navigate(`/calendar/${tripId}`)}
+              style={{ padding: '12px 24px' }}
+            >
+              Open Full Calendar View
+            </button>
+          </div>
+        )}
 
         {/* Totals */}
         <div className="container" style={{ padding: '20px', marginTop: '30px' }}>
@@ -209,6 +331,13 @@ const ItineraryView = () => {
               style={{ flex: 1 }}
             >
               View Calendar
+            </button>
+            <button
+              className="button"
+              onClick={() => navigate(`/trips/budget/${tripId}`)}
+              style={{ flex: 1 }}
+            >
+              Budget Breakdown
             </button>
             <button
               className="button"

@@ -35,6 +35,8 @@ model Trip {
   id          String      @id @default(cuid())
   userId      String
   name        String
+  description String?     @db.Text
+  coverPhoto  String?     @db.Text
   startDate   DateTime
   endDate     DateTime
   budget      Float       @default(0)
